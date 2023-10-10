@@ -49,45 +49,39 @@ class ProductTemplateImportMapper(Component):
 
     # TODO :     categ, special_price => minimal_price
     direct = [
-        ("description", "description"),
-        ("weight", "weight"),
-        ("standard_price", "standard_price"),
-        ("barcode", "barcode"),
-        ("description_sale", "description_sale"),
-        ("description_purchase", "description_purchase"),
         ("sale_ok", "sale_ok"),
         ("purchase_ok", "purchase_ok"),
         ("type", "detailed_type"),
     ]
 
-    @mapping
-    def company_id(self, record):
-        return {"company_id": self.env.user.company_id.id}
+    # @mapping
+    # def company_id(self, record):
+    #     return {"company_id": self.env.user.company_id.id}
 
-    @mapping
-    def uom_id(self, record):
-        binder = self.binder_for("odoo.uom.uom")
-        uom = binder.to_internal(record.uom_id.id, unwrap=True)
-        return {"uom_id": uom.id}
+    # @mapping
+    # def uom_id(self, record):
+    #     binder = self.binder_for("odoo.uom.uom")
+    #     uom = binder.to_internal(record.uom_id.id, unwrap=True)
+    #     return {"uom_id": uom.id}
 
-    @mapping
-    def uom_po_id(self, record):
-        binder = self.binder_for("odoo.uom.uom")
-        uom = binder.to_internal(record.uom_id.id, unwrap=True)
-        return {"uom_po_id": uom.id}
+    # @mapping
+    # def uom_po_id(self, record):
+    #     binder = self.binder_for("odoo.uom.uom")
+    #     uom = binder.to_internal(record.uom_id.id, unwrap=True)
+    #     return {"uom_po_id": uom.id}
 
-    @mapping
-    def price(self, record):
-        return {"list_price": record.list_price}
+    # @mapping
+    # def price(self, record):
+    #     return {"list_price": record.list_price}
 
-    @mapping
-    def default_code(self, record):
-        if not hasattr(record, "default_code"):
-            return {}
-        code = record["default_code"]
-        if not code:
-            return {"default_code": "/"}
-        return {"default_code": code}
+    # @mapping
+    # def default_code(self, record):
+    #     if not hasattr(record, "default_code"):
+    #         return {}
+    #     code = record["default_code"]
+    #     if not code:
+    #         return {"default_code": "/"}
+    #     return {"default_code": code}
 
     @mapping
     def name(self, record):
@@ -98,43 +92,43 @@ class ProductTemplateImportMapper(Component):
             return {"name": "/"}
         return {"name": name}
 
-    @mapping
-    def category(self, record):
-        categ_id = record["categ_id"]
-        binder = self.binder_for("odoo.product.category")
+    # @mapping
+    # def category(self, record):
+    #     categ_id = record["categ_id"]
+    #     binder = self.binder_for("odoo.product.category")
 
-        cat = binder.to_internal(categ_id.id, unwrap=True)
-        if not cat:
-            raise MappingError(
-                "Can't find external category with odoo_id %s." % categ_id.odoo_id
-            )
-        return {"categ_id": cat.id}
+    #     cat = binder.to_internal(categ_id.id, unwrap=True)
+    #     if not cat:
+    #         raise MappingError(
+    #             "Can't find external category with odoo_id %s." % categ_id.odoo_id
+    #         )
+    #     return {"categ_id": cat.id}
 
-    @mapping
-    def is_published(self, record):
-        is_published = False
-        if hasattr(record, "website_published"):
-            is_published = record["website_published"]
-        elif hasattr(record, "is_published"):
-            is_published = record["is_published"]
-        else:
-            return {}
-        return {"is_published": is_published}
+    # @mapping
+    # def is_published(self, record):
+    #     is_published = False
+    #     if hasattr(record, "website_published"):
+    #         is_published = record["website_published"]
+    #     elif hasattr(record, "is_published"):
+    #         is_published = record["is_published"]
+    #     else:
+    #         return {}
+    #     return {"is_published": is_published}
 
-    @mapping
-    def image(self, record):
-        if self.backend_record.version in (
-            "6.1",
-            "7.0",
-            "8.0",
-            "9.0",
-            "10.0",
-            "11.0",
-            "12.0",
-        ):
-            return {"image_1920": record.image if hasattr(record, "image") else False}
-        else:
-            return {"image_1920": record.image_1920}
+    # @mapping
+    # def image(self, record):
+    #     if self.backend_record.version in (
+    #         "6.1",
+    #         "7.0",
+    #         "8.0",
+    #         "9.0",
+    #         "10.0",
+    #         "11.0",
+    #         "12.0",
+    #     ):
+    #         return {"image_1920": record.image if hasattr(record, "image") else False}
+    #     else:
+    #         return {"image_1920": record.image_1920}
 
 
 class ProductTemplateImporter(Component):

@@ -75,13 +75,6 @@ class PartnerImportMapper(Component):
     # TODO :     special_price => minimal_price
     direct = [
         ("name", "name"),
-        ("website", "website"),
-        ("lang", "lang"),
-        ("ref", "ref"),
-        ("comment", "comment"),
-        ("company_type", "company_type"),
-        ("zip", "zip"),
-        ("delivery_margin", "delivery_margin"),
     ]
 
     @mapping
@@ -173,20 +166,20 @@ class PartnerImportMapper(Component):
         else:
             return {"supplier_rank": record.supplier_rank}
 
-    @mapping
-    def image(self, record):
-        if self.backend_record.version in (
-            "6.1",
-            "7.0",
-            "8.0",
-            "9.0",
-            "10.0",
-            "11.0",
-            "12.0",
-        ):
-            return {"image_1920": record.image if hasattr(record, "image") else False}
-        else:
-            return {"image_1920": record.image_1920}
+    # @mapping
+    # def image(self, record):
+    #     if self.backend_record.version in (
+    #         "6.1",
+    #         "7.0",
+    #         "8.0",
+    #         "9.0",
+    #         "10.0",
+    #         "11.0",
+    #         "12.0",
+    #     ):
+    #         return {"image_1920": record.image if hasattr(record, "image") else False}
+    #     else:
+    #         return {"image_1920": record.image_1920}
 
     @mapping
     def user_id(self, record):
@@ -195,50 +188,50 @@ class PartnerImportMapper(Component):
             user = binder.to_internal(record.user_id.id, unwrap=True)
             return {"user_id": user.id}
 
-    @mapping
-    def property_account_payable(self, record):
-        if float(self.backend_record.version) >= 9.0:
-            property_account_payable_id = record.property_account_payable_id
-        else:
-            property_account_payable_id = record.property_account_payable
+    # @mapping
+    # def property_account_payable(self, record):
+    #     if float(self.backend_record.version) >= 9.0:
+    #         property_account_payable_id = record.property_account_payable_id
+    #     else:
+    #         property_account_payable_id = record.property_account_payable
 
-        if property_account_payable_id:
-            binder = self.binder_for("odoo.account.account")
-            account = binder.to_internal(property_account_payable_id.id, unwrap=True)
-            if account:
-                return {"property_account_payable_id": account.id}
+    #     if property_account_payable_id:
+    #         binder = self.binder_for("odoo.account.account")
+    #         account = binder.to_internal(property_account_payable_id.id, unwrap=True)
+    #         if account:
+    #             return {"property_account_payable_id": account.id}
 
-    @mapping
-    def property_account_receivable(self, record):
-        if float(self.backend_record.version) >= 9.0:
-            property_account_receivable_id = record.property_account_receivable_id
-        else:
-            property_account_receivable_id = record.property_account_receivable
+    # @mapping
+    # def property_account_receivable(self, record):
+    #     if float(self.backend_record.version) >= 9.0:
+    #         property_account_receivable_id = record.property_account_receivable_id
+    #     else:
+    #         property_account_receivable_id = record.property_account_receivable
 
-        if property_account_receivable_id:
-            binder = self.binder_for("odoo.account.account")
-            account = binder.to_internal(property_account_receivable_id.id, unwrap=True)
-            if account:
-                return {"property_account_receivable_id": account.id}
+    #     if property_account_receivable_id:
+    #         binder = self.binder_for("odoo.account.account")
+    #         account = binder.to_internal(property_account_receivable_id.id, unwrap=True)
+    #         if account:
+    #             return {"property_account_receivable_id": account.id}
 
-    @mapping
-    def property_purchase_currency_id(self, record):
-        property_purchase_currency_id = None
-        if hasattr(record, "property_purchase_currency_id"):
-            property_purchase_currency_id = record.property_purchase_currency_id
-        if not property_purchase_currency_id:
-            if (
-                record.property_product_pricelist_purchase
-                and record.property_product_pricelist_purchase.currency_id
-            ):
-                property_purchase_currency_id = (
-                    record.property_product_pricelist_purchase.currency_id
-                )
-        if property_purchase_currency_id:
-            binder = self.binder_for("odoo.res.currency")
-            currency = binder.to_internal(property_purchase_currency_id.id, unwrap=True)
-            if currency:
-                return {"property_purchase_currency_id": currency.id}
+    # @mapping
+    # def property_purchase_currency_id(self, record):
+    #     property_purchase_currency_id = None
+    #     if hasattr(record, "property_purchase_currency_id"):
+    #         property_purchase_currency_id = record.property_purchase_currency_id
+    #     if not property_purchase_currency_id:
+    #         if (
+    #             record.property_product_pricelist_purchase
+    #             and record.property_product_pricelist_purchase.currency_id
+    #         ):
+    #             property_purchase_currency_id = (
+    #                 record.property_product_pricelist_purchase.currency_id
+    #             )
+    #     if property_purchase_currency_id:
+    #         binder = self.binder_for("odoo.res.currency")
+    #         currency = binder.to_internal(property_purchase_currency_id.id, unwrap=True)
+    #         if currency:
+    #             return {"property_purchase_currency_id": currency.id}
 
 
 class PartnerImporter(Component):
@@ -271,44 +264,45 @@ class PartnerImporter(Component):
 
         if self.odoo_record.property_account_payable:
             _logger.info("Importing account payable")
-            self._import_dependency(
-                self.odoo_record.property_account_payable.id,
-                "odoo.account.account",
-                force=force,
-            )
+            # self._import_dependency(
+            #     self.odoo_record.property_account_payable.id,
+            #     "odoo.account.account",
+            #     force=force,
+            # )
 
         if self.odoo_record.property_account_receivable:
             _logger.info("Importing account receivable")
-            self._import_dependency(
-                self.odoo_record.property_account_receivable.id,
-                "odoo.account.account",
-                force=force,
-            )
+            # self._import_dependency(
+            #     self.odoo_record.property_account_receivable.id,
+            #     "odoo.account.account",
+            #     force=force,
+            # )
 
-        if (
-            hasattr(self.odoo_record, "property_purchase_currency_id")
-            and self.odoo_record.property_purchase_currency_id
-        ):
-            _logger.info("Importing supplier currency")
-            self._import_dependency(
-                self.odoo_record.property_purchase_currency_id.id,
-                "odoo.res.currency",
-                force=force,
-            )
+        # if (
+        #     hasattr(self.odoo_record, "property_purchase_currency_id")
+        #     and self.odoo_record.property_purchase_currency_id
+        # ):
+        #     _logger.info("Importing supplier currency")
+        #     self._import_dependency(
+        #         self.odoo_record.property_purchase_currency_id.id,
+        #         "odoo.res.currency",
+        #         force=force,
+        #     )
 
-        if (
-            self.odoo_record.property_product_pricelist_purchase
-            and self.odoo_record.property_product_pricelist_purchase.currency_id
-        ):
-            _logger.info("Importing supplier currency")
-            self._import_dependency(
-                self.odoo_record.property_product_pricelist_purchase.currency_id.id,
-                "odoo.res.currency",
-                force=force,
-            )
+        # if (
+        #     self.odoo_record.property_product_pricelist_purchase
+        #     and self.odoo_record.property_product_pricelist_purchase.currency_id
+        # ):
+        #     _logger.info("Importing supplier currency")
+        #     self._import_dependency(
+        #         self.odoo_record.property_product_pricelist_purchase.currency_id.id,
+        #         "odoo.res.currency",
+        #         force=force,
+        #     )
 
         result = super()._import_dependencies(force=force)
         _logger.info("Dependencies imported for external ID %s", self.external_id)
+        _logger.info(result)
         return result
 
     def _after_import(self, binding, force=False):

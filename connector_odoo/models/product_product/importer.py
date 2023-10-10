@@ -30,7 +30,9 @@ class ProductBatchImporter(Component):
         )
         for external_id in external_ids:
             # TODO : get the categ parent_left and change the priority
+            _logger.info("ANTES")
             prod_id = self.backend_adapter.read(external_id)
+            _logger.info("DESPUES")
             cat_id = self.backend_adapter.read(
                 prod_id.categ_id.id, model="product.category"
             )
@@ -123,16 +125,16 @@ class ProductImportMapper(Component):
             )
         return {"categ_id": cat.id}
 
-    @mapping
-    def is_published(self, record):
-        is_published = False
-        if hasattr(record, "website_published"):
-            is_published = record["website_published"]
-        elif hasattr(record, "is_published"):
-            is_published = record["is_published"]
-        else:
-            return {}
-        return {"is_published": is_published}
+    # @mapping
+    # def is_published(self, record):
+    #     is_published = False
+    #     if hasattr(record, "website_published"):
+    #         is_published = record["website_published"]
+    #     elif hasattr(record, "is_published"):
+    #         is_published = record["is_published"]
+    #     else:
+    #         return {}
+    #     return {"is_published": is_published}
 
     @mapping
     def image(self, record):
@@ -192,22 +194,22 @@ class ProductImporter(Component):
         return super()._import_dependencies(force=force)
 
     def _after_import(self, binding, force=False):
-        attachment_model = self.work.odoo_api.api.get("ir.attachment")
-        attachment_ids = attachment_model.search(
-            [
-                ("res_model", "=", "product.product"),
-                ("res_id", "=", self.odoo_record.id),
-            ],
-            order="id",
-        )
-        total = len(attachment_ids)
-        _logger.info(
-            "{} Attachment found for external product {}".format(
-                total, self.odoo_record.id
-            )
-        )
-        for attachment_id in attachment_ids:
-            self.env["odoo.ir.attachment"].with_delay().import_record(
-                self.backend_record, attachment_id
-            )
+        # attachment_model = self.work.odoo_api.api.get("ir.attachment")
+        # attachment_ids = attachment_model.search(
+        #     [
+        #         ("res_model", "=", "product.product"),
+        #         ("res_id", "=", self.odoo_record.id),
+        #     ],
+        #     order="id",
+        # )
+        # total = len(attachment_ids)
+        # _logger.info(
+        #     "{} Attachment found for external product {}".format(
+        #         total, self.odoo_record.id
+        #     )
+        # )
+        # for attachment_id in attachment_ids:
+        #     self.env["odoo.ir.attachment"].with_delay().import_record(
+        #         self.backend_record, attachment_id
+        #     )
         return super()._after_import(binding, force)
